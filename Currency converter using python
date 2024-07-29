@@ -1,0 +1,39 @@
+import http.client
+import json
+
+def get_exchange_rate(base_currency, target_currency):
+    conn = http.client.HTTPSConnection("api.exchangerate-api.com")
+    endpoint = f"/v4/latest/{base_currency}"
+    conn.request("GET", endpoint)
+    response = conn.getresponse()
+    
+    if response.status == 200:
+        data = response.read().decode()
+        rates = json.loads(data)
+        if target_currency in rates['rates']:
+            return rates['rates'][target_currency]
+        else:
+            raise ValueError("Invalid target currency code.")
+    else:
+        raise Exception(f"Failed to fetch data: {response.status}")
+
+def convert_currency(amount, exchange_rate):
+    net_amt= amount * exchange_rate
+    return net_amt
+
+def main():
+    base_currency = input("Enter the base currency (e.g., USD): ").upper()
+    target_currency = input("Enter the target currency (e.g., EUR): ").upper()
+    amount = float(input("Enter the amount to convert: "))
+
+    try:
+        exchange_rate = get_exchange_rate(base_currency, target_currency)
+        converted_amount = convert_currency(amount, exchange_rate)
+        print(f"{amount} {base_currency} is equal to {converted_amount:.2f} {target_currency}")
+    except ValueError as e:
+        print(e)
+    except Exception as e:
+        print(e)
+
+if __name__ == "__main__":
+    main()
