@@ -1,0 +1,29 @@
+import random
+
+def getRandomNumber():
+    return random.randrange(1, 100)
+
+def giveHint(number, guess):
+    if abs(guess - number) > 10:
+        return "Cold! You're far from the correct number. Try again."
+    elif number == guess:
+        return "Right"
+    else:
+        return "Hot! You're getting closer! Keep trying."
+
+def runGuess():
+    secretNumber = getRandomNumber()
+    while True:
+        try:
+            user_guess = int(input("Enter a number between 1 and 100: "))
+            hint = giveHint(secretNumber, user_guess)
+            if hint == "Right":
+                print("You guessed it Right!")
+                break
+            else:
+                print(hint)
+        except ValueError:
+            print("Please enter a valid number.")
+
+if __name__ == '__main__':
+    runGuess()
